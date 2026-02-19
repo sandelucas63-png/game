@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content Generator | Social Media & Business Ideas</title>
+    <meta name="description" content="Generate AI-powered social media captions, business ideas, and motivational quotes. Login, usage limits, subscription plans included.">
+    <meta name="theme-color" content="#4F46E5">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/x-icon" href="https://picsum.photos/64?random=999">
+    <link rel="apple-touch-icon" href="https://picsum.photos/180?random=998">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#4F46E5",
+                        secondary: "#7C3AED",
+                        accent: "#10B981",
+                        dark: "#1F2937",
+                        light: "#F9FAFB"
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'fade-in': 'fadeIn 0.5s ease-in'
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .content-card {
+            transition: all 0.3s ease;
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .loading-dots:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="fixed inset-0 z-50 flex items-center justify-center gradient-bg">
+        <div class="text-center text-white">
+            <div class="w-32 h-32 mx-auto mb-8 rounded-full bg-white/20 flex items-center justify-center">
+                <i class="fas fa-brain text-5xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold mb-4">AI Content Generator</h1>
+            <p class="text-xl opacity-90">Loading your creative assistant...</p>
+            <div class="mt-8">
+                <div class="inline-block h-1 w-24 bg-white/30 rounded-full overflow-hidden">
+                    <div class="h-full bg-white animate-pulse-slow"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" class="hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-sm border-b border-gray-200">
+            <nav class="container mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                            <i class="fas fa-brain text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-dark">AI Generator</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div id="user-info" class="hidden">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-user text-gray-600"></i>
+                                </div>
+                                <span id="user-name" class="font-medium text-dark"></span>
+                                <button onclick="logout()" class="text-sm text-gray-500 hover:text-primary">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="auth-buttons" class="flex space-x-3">
+                            <button onclick="showLoginModal()" class="px-4 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
+                                Login
+                            </button>
+                            <button onclick="showRegisterModal()" class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-secondary transition-colors">
+                                Sign Up
+                            </button>
+                        </div>
+                        
+                        <div class="relative">
+                            <button id="usage-btn" class="px-3 py-1.5 text-sm font-medium text-dark bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                <i class="fas fa-chart-bar mr-1"></i>
+                                <span id="usage-count">0/10</span>
+                            </button>
+                            <div id="usage-tooltip" class="hidden absolute right-0 mt-2 w-64 p-4 bg-white rounded-lg shadow-xl border border-gray-200">
+                                <h4 class="font-bold text-dark mb-2">Usage Limit</h4>
+                                <p class="text-sm text-gray-600 mb-3">Free tier: 10 generations per day</p>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="usage-bar" class="bg-accent h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Upgrade for unlimited access</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-4 py-8">
+            <!-- Dashboard -->
+            <div id="dashboard" class="animate-fade-in">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-bold text-dark mb-4">Generate Creative Content with AI</h1>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Create engaging social media captions, innovative business ideas, and inspiring motivational quotes powered by artificial intelligence.</p>
+                </div>
+
+                <!-- Content Type Selection -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div id="content-type-cards"></div>
+                </div>
+
+                <!-- Input Section -->
+                <div class="max-w-3xl mx-auto mb-12">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-dark mb-2">What would you like to generate?</label>
+                            <div id="type-selector" class="flex flex-wrap gap-3 mb-4"></div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-dark mb-2">Keywords or Theme</label>
+                            <input type="text" id="input-keywords" placeholder="e.g., technology, fitness, entrepreneurship, mindfulness..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-dark mb-2">Tone & Style</label>
+                            <div id="tone-selector" class="flex flex-wrap gap-2 mb-4"></div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-dark mb-2">Number of Results</label>
+                            <div class="flex items-center space-x-4">
+                                <button onclick="adjustCount(-1)" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span id="result-count" class="text-xl font-bold text-dark">3</span>
+                                <button onclick="adjustCount(1)" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button onclick="generateContent()" id="generate-btn" class="w-full py-4 bg-primary text-white font-semibold rounded-lg hover:bg-secondary transition-colors flex items-center justify-center">
+                            <i class="fas fa-magic mr-2"></i>
+                            Generate Content
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="results-section" class="hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-dark">Generated Results</h2>
+                        <div class="flex space-x-3">
+                            <button onclick="copyAllResults()" class="px-4 py-2 text-sm font-medium text-dark border border-gray-300 rounded-lg hover:bg-gray-50">
+                                <i class="fas fa-copy mr-1"></i> Copy All
+                            </button>
+                            <button onclick="clearResults()" class="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50">
+                                <i class="fas fa-trash mr-1"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                    <div id="results-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+                </div>
+
+                <!-- Subscription Plans -->
+                <div id="plans-section" class="mt-16">
+                    <div class="text-center mb-10">
+                        <h2 class="text-3xl font-bold text-dark mb-4">Choose Your Plan</h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto">Upgrade to unlock unlimited generations, advanced features, and priority support.</p>
+                    </div>
+                    <div id="pricing-cards" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto"></div>
+                </div>
+
+                <!-- Features -->
+                <div class="mt-16">
+                    <div class="text-center mb-10">
+                        <h2 class="text-3xl font-bold text-dark mb-4">Why Choose Our AI Generator?</h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto">Powerful features designed for creators, entrepreneurs, and content marketers.</p>
+                    </div>
+                    <div id="features-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-16 bg-dark text-white">
+            <div class="container mx-auto px-4 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <span class="text-xl font-bold">AI Generator</span>
+                        </div>
+                        <p class="text-gray-400">AI-powered content generation for social media, business, and personal growth.</p>
+                    </div>
+                    
+                    <div id="footer-links-1"></div>
+                    <div id="footer-links-2"></div>
+                    <div id="footer-links-3"></div>
+                </div>
+                
+                <div class="mt-12 pt-8 border-t border-gray-800">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <div class="text-gray-400 text-sm mb-4 md:mb-0">
+                            © 2024 AI Content Generator. All rights reserved.
+                        </div>
+                        <div class="flex space-x-6">
+                            <a href="#privacy" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a>
+                            <a href="#terms" class="text-gray-400 hover:text-white text-sm">Terms of Service</a>
+                            <a href="#contact" class="text-gray-400 hover:text-white text-sm">Contact</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="login-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black opacity-50"></div>
+            <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-dark">Login</h3>
+                    <button onclick="closeModals()" class="text-gray-400 hover:text-dark">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form id="login-form" onsubmit="return handleLogin(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-dark mb-2">Email</label>
+                        <input type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="your@email.com">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-dark mb-2">Password</label>
+                        <input type="password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-primary text-white font-semibold rounded-lg hover:bg-secondary transition-colors">
+                        Sign In
+                    </button>
+                </form>
+                <p class="text-center text-gray-600 mt-4">
+                    Don't have an account? 
+                    <button onclick="showRegisterModal()" class="text-primary font-medium hover:underline">Sign up</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="register-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black opacity-50"></div>
+            <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-dark">Create Account</h3>
+                    <button onclick="closeModals()" class="text-gray-400 hover:text-dark">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form id="register-form" onsubmit="return handleRegister(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-dark mb-2">Full Name</label>
+                        <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="John Doe">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-dark mb-2">Email</label>
+                        <input type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="your@email.com">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-dark mb-2">Password</label>
+                        <input type="password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-primary text-white font-semibold rounded-lg hover:bg-secondary transition-colors">
+                        Create Account
+                    </button>
+                </form>
+                <p class="text-center text-gray-600 mt-4">
+                    Already have an account? 
+                    <button onclick="showLoginModal()" class="text-primary font-medium hover:underline">Login</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed bottom-4 right-4 z-50 bg-dark text-white px-6 py-3 rounded-lg shadow-xl animate-slide-up">
+        <div class="flex items-center">
+            <i id="toast-icon" class="fas fa-check-circle mr-3"></i>
+            <span id="toast-message">Operation completed successfully!</span>
+        </div>
+    </div>
+
+    <script>
+        // Data Layer
+        const contentTypes = [
+            { "id": "captions", "title": "Social Media Captions", "icon": "fas fa-comment-alt", "description": "Engaging captions for Instagram, Twitter, Facebook", "color": "bg-blue-100 text-blue-800" },
+            { "id": "business", "title": "Business Ideas", "icon": "fas fa-lightbulb", "description": "Innovative startup and business concepts", "color": "bg-green-100 text-green-800" },
+            { "id": "quotes", "title": "Motivational Quotes", "icon": "fas fa-quote-right", "description": "Inspirational quotes for personal growth", "color": "bg-purple-100 text-purple-800" }
+        ];
+
+        const tones = [
+            { "id": "professional", "label": "Professional", "color": "bg-gray-100 text-gray-800" },
+            { "id": "casual", "label": "Casual", "color": "bg-blue-100 text-blue-800" },
+            { "id": "funny", "label": "Funny", "color": "bg-yellow-100 text-yellow-800" },
+            { "id": "inspirational", "label": "Inspirational", "color": "bg-purple-100 text-purple-800" },
+            { "id": "persuasive", "label": "Persuasive", "color": "bg-red-100 text-red-800" }
+        ];
+
+        const pricingPlans = [
+            { "id": "free", "name": "Free", "price": "$0", "period": "/month", "features": ["10 generations/day", "Basic content types", "Standard support", "Community access"], "cta": "Current Plan", "highlight": false },
+            { "id": "pro", "name": "Pro", "price": "$9.99", "period": "/month", "features": ["Unlimited generations", "All content types", "Priority support", "Advanced analytics", "Export options"], "cta": "Upgrade Now", "highlight": true },
+            { "id": "team", "name": "Team", "price": "$24.99", "period": "/month", "features": ["Everything in Pro", "Team collaboration", "Custom templates", "API access", "Dedicated support"], "cta": "Contact Sales", "highlight": false }
+        ];
+
+        const features = [
+            { "title": "AI-Powered", "description": "Advanced AI models generate high-quality, relevant content", "icon": "fas fa-robot" },
+            { "title": "Multiple Formats", "description": "Generate captions, business ideas, quotes, and more", "icon": "fas fa-layer-group" },
+            { "title": "Customizable", "description": "Adjust tone, length, and style to match your brand", "icon": "fas fa-sliders-h" },
+            { "title": "Export Options", "description": "Copy, save, or export generated content easily", "icon": "fas fa-download" }
+        ];
+
+        const footerLinks1 = [
+            { "label": "Home", "href": "#home" },
+            { "label": "Features", "href": "#features" },
+            { "label": "Pricing", "href": "#pricing" },
+            { "label": "About", "href": "#about" }
+        ];
+
+        const footerLinks2 = [
+            { "label": "Privacy Policy", "href": "#privacy" },
+            { "label": "Terms of Service", "href": "#terms" },
+            { "label": "Cookie Policy", "href": "#cookies" },
+            { "label": "GDPR", "href": "#gdpr" }
+        ];
+
+        const footerLinks3 = [
+            { "label": "Contact Support", "href": "#contact" },
+            { "label": "Help Center", "href": "#help" },
+            { "label": "API Documentation", "href": "#api" },
+            { "label": "Status", "href": "#status" }
+        ];
+
+        // App State
+        let currentUser = null;
+        let usageCount = 0;
+        let maxUsage = 10;
+        let selectedType = "captions";
+        let selectedTone = "professional";
+        let resultCount = 3;
+        let generatedResults = [];
+
+        // Reusable Render Functions
+        function renderContentTypeCards(items) {
+            return items.map(item => `
+                <div class="content-card bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow ${item.id === selectedType ? 'ring-2 ring-primary' : ''}" onclick="selectType('${item.id}')">
+                    <div class="w-12 h-12 rounded-lg ${item.color.split(' ')[0]} flex items-center justify-center mb-4">
+                        <i class="${item.icon} text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-2">${item.title}</h3>
+                    <p class="text-gray-600">${item.description}</p>
+                </div>
+            `).join("");
+        }
+
+        function renderTypeSelector(items) {
+            return items.map(item => `
+                <button type="button" onclick="selectType('${item.id}')" class="px-4 py-2 rounded-full ${item.id === selectedType ? 'bg-primary text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'} transition-colors">
+                    <i class="${item.icon} mr-2"></i>${item.title}
+                </button>
+            `).join("");
+        }
+
+        function renderToneSelector(items) {
+            return items.map(tone => `
+                <button type="button" onclick="selectTone('${tone.id}')" class="px-3 py-1.5 rounded-full text-sm font-medium ${tone.id === selectedTone ? 'ring-2 ring-primary ring-offset-2' : ''} ${tone.color} hover:opacity-90 transition-opacity">
+                    ${tone.label}
+                </button>
+            `).join("");
+        }
+
+        function renderPricingCards(items) {
+            return items.map(plan => `
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden ${plan.highlight ? 'border-2 border-primary transform scale-105' : 'border border-gray-200'}">
+                    ${plan.highlight ? '<div class="bg-primary text-white text-center py-2 text-sm font-semibold">Most Popular</div>' : ''}
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-dark mb-4">${plan.name}</h3>
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold text-dark">${plan.price}</span>
+                            <span class="text-gray-600">${plan.period}</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            ${plan.features.map(feature => `<li class="flex items-center"><i class="fas fa-check text-accent mr-3"></i><span class="text-gray-700">${feature}</span></li>`).join("")}
+                        </ul>
+                        <button onclick="${plan.id === 'free' ? '' : 'upgradePlan(\'' + plan.id + '\')'}" class="w-full py-3 ${plan.highlight ? 'bg-primary hover:bg-secondary' : 'bg-gray-100 hover:bg-gray-200'} text-dark font-semibold rounded-lg transition-colors">
+                            ${plan.cta}
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderFeaturesGrid(items) {
+            return items.map(feature => `
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                        <i class="${feature.icon} text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-dark mb-2">${feature.title}</h3>
+                    <p class="text-gray-600">${feature.description}</p>
+                </div>
+            `).join("");
+        }
+
+        function renderFooterLinks(items, containerId) {
+            return items.map(item => `
+                <li class="mb-3">
+                    <a href="${item.href}" class="text-gray-400 hover:text-white transition-colors">${item.label}</a>
+                </li>
+            `).join("");
+        }
+
+        function renderResults(items) {
+            return items.map((result, index) => `
+                <div class="bg-white rounded-xl shadow-md p-6 animate-slide-up" style="animation-delay: ${index * 0.1}s">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full ${contentTypes.find(t => t.id === result.type).color.split(' ')[0]} flex items-center justify-center mr-3">
+                                <i class="${contentTypes.find(t => t.id === result.type).icon}"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-600">${result.type.charAt(0).toUpperCase() + result.type.slice(1)} • ${result.tone}</span>
+                        </div>
+                        <button onclick="copyResult(${index})" class="text-gray-400 hover:text-primary">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p class="text-gray-800 mb-4">${result.content}</p>
+                    <div class="text-xs text-gray-500">Generated ${result.timestamp}</div>
+                </div>
+            `).join("");
+        }
+
+        // Initialize UI
+        function initializeUI() {
+            // Hide splash screen after 1.5 seconds
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('app').classList.remove('hidden');
+                loadUserState();
+            }, 1500);
+
+            // Render dynamic content
+            document.getElementById('content-type-cards').innerHTML = renderContentTypeCards(contentTypes);
+            document.getElementById('type-selector').innerHTML = renderTypeSelector(contentTypes);
+            document.getElementById('tone-selector').innerHTML = renderToneSelector(tones);
+            document.getElementById('pricing-cards').innerHTML = renderPricingCards(pricingPlans);
+            document.getElementById('features-grid').innerHTML = renderFeaturesGrid(features);
+            document.getElementById('footer-links-1').innerHTML = `<h4 class="font-bold text-white mb-4">Product</h4><ul>${renderFooterLinks(footerLinks1, 'footer-links-1')}</ul>`;
+            document.getElementById('footer-links-2').innerHTML = `<h4 class="font-bold text-white mb-4">Legal</h4><ul>${renderFooterLinks(footerLinks2, 'footer-links-2')}</ul>`;
+            document.getElementById('footer-links-3').innerHTML = `<h4 class="font-bold text-white mb-4">Support</h4><ul>${renderFooterLinks(footerLinks3, 'footer-links-3')}</ul>`;
+
+            // Setup event listeners
+            setupEventListeners();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Usage tooltip
+            const usageBtn = document.getElementById('usage-btn');
+            const usageTooltip = document.getElementById('usage-tooltip');
+            
+            usageBtn.addEventListener('mouseenter', () => {
+                usageTooltip.classList.remove('hidden');
+            });
+            
+            usageBtn.addEventListener('mouseleave', () => {
+                usageTooltip.classList.add('hidden');
+            });
+
+            // Close modals on outside click
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'login-modal' || e.target.id === 'register-modal') {
+                    closeModals();
+                }
+            });
+
+            // Escape key closes modals
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModals();
+            });
+        }
+
+        // User State Management
+        function loadUserState() {
+            const savedUser = localStorage.getItem('aiGeneratorUser');
+            const savedUsage = localStorage.getItem('aiGeneratorUsage');
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUserUI();
+            }
+            
+            if (savedUsage) {
+                usageCount = parseInt(savedUsage);
+                updateUsageUI();
+            }
+        }
+
+        function saveUserState() {
+            if (currentUser) {
+                localStorage.setItem('aiGeneratorUser', JSON.stringify(currentUser));
+            }
+            localStorage.setItem('aiGeneratorUsage', usageCount.toString());
+        }
+
+        // UI Updates
+        function updateUserUI() {
+            const userInfo = document.getElementById('user-info');
+            const authButtons = document.getElementById('auth-buttons');
+            const userName = document.getElementById('user-name');
+            
+            if (currentUser) {
+                userInfo.classList.remove('hidden');
+                authButtons.classList.add('hidden');
+                userName.textContent = currentUser.name.split(' ')[0];
+            } else {
+                userInfo.classList.add('hidden');
+                authButtons.classList.remove('hidden');
+            }
+        }
+
+        function updateUsageUI() {
+            const usageCountEl = document.getElementById('usage-count');
+            const usageBar = document.getElementById('usage-bar');
+            const percentage = Math.min((usageCount / maxUsage) * 100, 100);
+            
+            usageCountEl.textContent = `${usageCount}/${maxUsage}`;
+            usageBar.style.width = `${percentage}%`;
+        }
+
+        // Content Generation
+        function generateContent() {
+            if (!currentUser) {
+                showToast('Please login to generate content', 'error');
+                showLoginModal();
+                return;
+            }
+
+            if (usageCount >= maxUsage) {
+                showToast('Daily limit reached. Upgrade to Pro for unlimited access.', 'warning');
+                document.getElementById('plans-section').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            const keywords = document.getElementById('input-keywords').value.trim();
+            if (!keywords) {
+                showToast('Please enter keywords or theme', 'warning');
+                return;
+            }
+
+            // Show loading state
+            const generateBtn = document.getElementById('generate-btn');
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
+            generateBtn.disabled = true;
+
+            // Simulate AI generation (in real app, this would call an API)
+            setTimeout(() => {
+                const mockResults = generateMockContent(keywords, selectedType, selectedTone, resultCount);
+                generatedResults = mockResults;
+                
+                // Update usage
+                usageCount += 1;
+                saveUserState();
+                updateUsageUI();
+                
+                // Display results
+                document.getElementById('results-container').innerHTML = renderResults(mockResults);
+                document.getElementById('results-section').classList.remove('hidden');
+                document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+                
+                // Reset button
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+                
+                showToast(`Generated ${resultCount} ${selectedType} successfully!`, 'success');
+            }, 1500);
+        }
+
+        function generateMockContent(keywords, type, tone, count) {
+            const templates = {
+                captions: [
+                    "Just launched something amazing! " + keywords + " has never been this exciting. #innovation #tech",
+                    "Behind the scenes of our latest " + keywords + " project. The team worked tirelessly to make this happen!",
+                    "Why " + keywords + " matters more than ever in today's digital landscape.",
+                    "Transforming " + keywords + " one step at a time. Join us on this journey!",
+                    "The future of " + keywords + " is here. Are you ready to embrace it?"
+                ],
+                business: [
+                    "AI-powered " + keywords + " platform that helps businesses optimize their workflow.",
+                    "Subscription box service for " + keywords + " enthusiasts with curated monthly deliveries.",
+                    "Mobile app that gamifies " + keywords + " learning for students and professionals.",
+                    "Eco-friendly " + keywords + " products made from sustainable materials.",
+                    "Online marketplace connecting " + keywords + " experts with clients worldwide."
+                ],
+                quotes: [
+                    "Success in " + keywords + " comes to those who are too busy to be looking for it.",
+                    "The only limit to " + keywords + " is the one you set in your mind.",
+                    "Every great " + keywords + " achievement begins with a single step forward.",
+                    "In the middle of every " + keywords + " difficulty lies opportunity.",
+                    "Your " + keywords + " journey is unique. Don't compare it to anyone else's path."
+                ]
+            };
+
+            const results = [];
+            const baseTemplates = templates[type] || templates.captions;
+            
+            for (let i = 0; i < count; i++) {
+                const template = baseTemplates[i % baseTemplates.length];
+                const content = template.replace('{keywords}', keywords);
+                
+                results.push({
+                    type: type,
+                    tone: tone,
+                    content: content,
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+            }
+            
+            return results;
+        }
+
+        // UI Actions
+        function selectType(type) {
+            selectedType = type;
+            document.getElementById('content-type-cards').innerHTML = renderContentTypeCards(contentTypes);
+            document.getElementById('type-selector').innerHTML = renderTypeSelector(contentTypes);
+        }
+
+        function selectTone(tone) {
+            selectedTone = tone;
+            document.getElementById('tone-selector').innerHTML = renderToneSelector(tones);
+        }
+
+        function adjustCount(change) {
+            resultCount = Math.max(1, Math.min(10, resultCount + change));
+            document.getElementById('result-count').textContent = resultCount;
+        }
+
+        function showLoginModal() {
+            closeModals();
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        function showRegisterModal() {
+            closeModals();
+            document.getElementById('register-modal').classList.remove('hidden');
+        }
+
+        function closeModals() {
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('register-modal').classList.add('hidden');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const form = e.target;
+            const email = form.querySelector('input[type="email"]').value;
+            const password = form.querySelector('input[type="password"]').value;
+            
+            // Mock authentication
+            currentUser = {
+                id: 'user_' + Date.now(),
+                email: email,
+                name: 'Demo User',
+                plan: 'free'
+            };
+            
+            saveUserState();
+            updateUserUI();
+            closeModals();
+            showToast('Login successful!', 'success');
+            return false;
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const form = e.target;
+            const name = form.querySelector('input[type="text"]').value;
+            const email = form.querySelector('input[type="email"]').value;
+            const password = form.querySelector('input[type="password"]').value;
+            
+            // Mock registration
+            currentUser = {
+                id: 'user_' + Date.now(),
+                email: email,
+                name: name,
+                plan: 'free'
+            };
+            
+            saveUserState();
+            updateUserUI();
+            closeModals();
+            showToast('Account created successfully!', 'success');
+            return false;
+        }
+
+        function logout() {
+            currentUser = null;
+            saveUserState();
+            updateUserUI();
+            showToast('Logged out successfully', 'info');
+        }
+
+        function upgradePlan(planId) {
+            if (!currentUser) {
+                showToast('Please login to upgrade', 'warning');
+                showLoginModal();
+                return;
+            }
+            
+            showToast(`Upgrading to ${planId} plan...`, 'info');
+            // In real app, this would integrate with payment processor
+        }
+
+        function copyResult(index) {
+            const result = generatedResults[index];
+            navigator.clipboard.writeText(result.content)
+                .then(() => showToast('Copied to clipboard!', 'success'))
+                .catch(() => showToast('Failed to copy', 'error'));
+        }
+
+        function copyAllResults() {
+            const allText = generatedResults.map(r => r.content).join('\n\n');
+            navigator.clipboard.writeText(allText)
+                .then(() => showToast('All results copied!', 'success'))
+                .catch(() => showToast('Failed to copy', 'error'));
+        }
+
+        function clearResults() {
+            generatedResults = [];
+            document.getElementById('results-container').innerHTML = '';
+            document.getElementById('results-section').classList.add('hidden');
+            showToast('Results cleared', 'info');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toast-icon');
+            const toastMessage = document.getElementById('toast-message');
+            
+            // Set icon based on type
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            toastIcon.className = `fas ${icons[type] || icons.success} mr-3`;
+            toastMessage.textContent = message;
+            
+            // Set color based on type
+            const colors = {
+                success: 'bg-green-600',
+                error: 'bg-red-600',
+                warning: 'bg-yellow-600',
+                info: 'bg-blue-600'
+            };
+            
+            toast.className = `hidden fixed bottom-4 right-4 z-50 ${colors[type] || colors.success} text-white px-6 py-3 rounded-lg shadow-xl animate-slide-up`;
+            toast.classList.remove('hidden');
+            
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // PWA Installation
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', initializeUI);
+    </script>
+</body>
+</html>
